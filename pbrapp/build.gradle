@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.1-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id "docker.plugin" version "1.0.34"
 }
 
 group = 'com.romaomoura.pbrapi'
@@ -12,6 +13,7 @@ repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/milestone' }
 	maven { url 'https://repo.spring.io/snapshot' }
+	maven {	url "https://plugins.gradle.org/m2/"}
 }
 
 dependencies {
@@ -20,9 +22,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	classpath "gradle.plugin.com.shainnazarov:gradle-plugins:1.0.34"
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+apply plugin: "docker.plugin"
 
 test {
 	useJUnitPlatform()
