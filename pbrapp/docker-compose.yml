@@ -14,7 +14,7 @@ services:
     links:
       - postgres
   postgres:
-    image: postgres:9.5
+    image: postgres:10.4
     container_name: "postgres"
     volumes:
       - ./postgres:/var/lib/postgres

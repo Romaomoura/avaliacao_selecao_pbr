@@ -8,7 +8,8 @@ ENV ADDITIONAL_OPTS=${ADDITIONAL_OPTS}
 
 WORKDIR /opt/pbrapp
 
-COPY /bin/main/*.jar pbrapp.jar
+# Falta configurar esse caminho para a copia da imagem
+COPY target/pbrapp*.jar pbrapp.jar 
 
 SHELL ["/bin/sh", "-c"]
 
