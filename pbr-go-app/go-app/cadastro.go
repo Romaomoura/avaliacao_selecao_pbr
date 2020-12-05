@@ -8,15 +8,17 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	//"math/big"
 
 	_ "github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	//"github.com/lxn/go-pgsql"
 
 )
 
 // Cadastro
 type Cadastro struct {
-	ID   int    `json:"id"`
+	ID   int `json:"id"`
 	NomeCompleto string `json:"nomeCompleto"`
 	Telefone string `json:"telefone"`
 	Email string `json:"email"`
@@ -26,9 +28,11 @@ type Cadastro struct {
 func CadastroHandler(w http.ResponseWriter, r *http.Request) {
 	sid := strings.TrimPrefix(r.URL.Path, "/cadastros/")
 	id, _ := strconv.Atoi(sid)
+	fmt.Println(id) //verificar se o id é o mesmo repassado na URL
 
 	switch {
 	case r.Method == "GET" && id > 0:
+		//fmt.Println(id)
 		buscarPorID(w, r, id)
 	case r.Method == "GET":
 		buscarTodos(w, r)
@@ -37,7 +41,7 @@ func CadastroHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Não deu... :(")
 	}
 }
-//Configuração básica do banco de dados
+//Configuração básica do banco de dados, dados expostos (forma incorreta)
 const (
 	DB_USER     = "postgres"
 	DB_PASSWORD = "Romao1988!"
@@ -58,16 +62,19 @@ func buscarPorID(w http.ResponseWriter, r *http.Request, id int) {
 	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
             DB_USER, DB_PASSWORD, DB_NAME)
 	db, err := sql.Open("postgres", dbinfo)
-	//db, err := sql.Open("postgres", "postgres:Romao1988!@/api_pbr")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	var c Cadastro
-	db.QueryRow("select id, email, nome_completo, telefone from cadastro where id = ?", id).Scan(&c.ID, &c.Email, &c.NomeCompleto, &c.Telefone)
+	idLong := uint64(id)
 
-	json, _ := json.Marshal(c)
+	var cad Cadastro
+	db.QueryRow("SELECT id, nome_completo, telefone, email FROM cadastro WHERE id=?", idLong).Scan(&cad.ID, &cad.NomeCompleto, &cad.Telefone, &cad.Email)
+	fmt.Println(idLong) //verifica qual id está sendo passado
+	fmt.Println(cad.ID, cad.NomeCompleto) //verificar se a consulta está retornando algum dado
+
+	json, _ := json.Marshal(cad)
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(json))
@@ -78,7 +85,6 @@ func buscarTodos(w http.ResponseWriter, r *http.Request) {
 	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
             DB_USER, DB_PASSWORD, DB_NAME)
 	db, err := sql.Open("postgres", dbinfo)
-	//db, err := sql.Open("postgres", "postgres:Romao1988!@/api_pbr")
 	if err != nil {
 		log.Fatal(err)
 	}
