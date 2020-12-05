@@ -14,12 +14,6 @@ import (
 
 )
 
-/* func main() {
-	http.HandleFunc("/cadastros/", CadastroHandler)
-	log.Println("Executando...")
-	log.Fatal(http.ListenAndServe(":3000", nil))
-} */
-
 // Cadastro
 type Cadastro struct {
 	ID   int    `json:"id"`
